@@ -24,7 +24,33 @@ class TugasController extends Controller
             ]);
         }
 
-        return view('tugas.index', compact('tugas', 'users'));
+        return view('tugas.tugas', compact('tugas', 'users'));
+    }
+
+    /**
+     * Menampilkan detail tugas (API & Web).
+     */
+    public function show(Request $request, $id)
+    {
+        $tugas = Tugas::with('user')->findOrFail($id);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'data' => $tugas,
+            ]);
+        }
+
+        return view('tugas.show', compact('tugas'));
+    }
+
+    /**
+     * Menampilkan halaman tambah tugas.
+     */
+    public function create()
+    {
+        $users = User::all();
+        return view('tugas.create', compact('users'));
     }
 
     /**
@@ -55,6 +81,16 @@ class TugasController extends Controller
     }
 
     /**
+     * Menampilkan halaman edit tugas.
+     */
+    public function edit($id)
+    {
+        $tugas = Tugas::findOrFail($id);
+        $users = User::all();
+        return view('tugas.edit', compact('tugas', 'users'));
+    }
+
+    /**
      * Mengupdate tugas (API & Web).
      */
     public function update(Request $request, $id)
@@ -80,6 +116,15 @@ class TugasController extends Controller
         }
 
         return redirect()->route('tugas.index')->with('success', 'Tugas berhasil diperbarui!');
+    }
+
+    /**
+     * Menampilkan halaman konfirmasi hapus tugas.
+     */
+    public function confirm($id)
+    {
+        $tugas = Tugas::findOrFail($id);
+        return view('tugas.delete', compact('tugas'));
     }
 
     /**
